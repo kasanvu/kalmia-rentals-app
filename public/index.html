@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KALmia Rentals - Secure Workspace Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin:0; font-family:'Plus Jakarta Sans', sans-serif; background:#f8fafc;">
+
+    <div id="auth-screen" class="auth-container">
+        <div class="auth-card" style="background:#fff; max-width:400px; margin:10vh auto; padding:2.5rem; border-radius:16px; box-shadow:0 10px 25px -5px rgba(0,0,0,0.05);">
+            <div class="auth-header" style="text-align:center; margin-bottom:2rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 45px; height: 45px; background: rgba(34, 197, 94, 0.08); padding: 8px; border-radius: 12px; margin-bottom: 0.5rem;">
+                  <path d="M3 21h18" /><path d="M5 21V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v16" /><path d="M13 21V11a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v10" />
+                </svg>
+                <h2 style="margin:0; color:#1e1b4b;">KALmia Rentals</h2>
+                <p style="margin:4px 0 0 0; color:#64748b; font-size:0.9rem;">Nze Houselord Core System</p>
+            </div>
+            
+            <div class="form-group" style="margin-bottom:1.25rem;">
+                <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#334155;">Account Username</label>
+                <input type="text" id="login-username" placeholder="mukasa, hajji, or admin" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
+            </div>
+            
+            <div class="form-group" style="margin-bottom:1.5rem;">
+                <label style="display:block; margin-bottom:0.5rem; font-weight:600; color:#334155;">Security Password</label>
+                <input type="password" id="login-password" placeholder="••••••••" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
+            </div>
+            
+            <button class="btn btn-primary" onclick="handleLogin()" style="width:100%; background:#1e1b4b; color:white; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer;">Sign In Securely</button>
+            <p id="login-error" class="text-danger hidden" style="color:#ef4444; text-align: center; margin-top: 1rem; font-size: 0.9rem;">
+                ❌ Invalid username or password combo.
+            </p>
+            
+            <div class="auth-footer-text" style="margin-top:2rem; background:#f8fafc; padding:1rem; border-radius:8px; font-size:0.8rem; color:#64748b;">
+                <strong>System Gate Logins:</strong><br>
+                • Tenant(omupangisa): <code>mukasa</code> / <code>123</code><br>
+                • Landlord: <code>hajji</code> / <code>456</code><br>
+                • System Admin: <code>admin</code> / <code>789</code>
+            </div>
+        </div>
+    </div>
+
+    <div id="momo-modal" class="modal-overlay hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); display:flex; align-items:center; justify-content:center; z-index:999;">
+        <div class="modal-card" style="background:white; padding:2rem; border-radius:16px; max-width:440px; width:100%; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);">
+            <div class="modal-header" style="display:flex; justify-content:between; align-items:center; margin-bottom:1rem;">
+                <h3 style="margin:0; color:#1e1b4b;">📲 Mobile Money Gateway</h3>
+                <button onclick="closeMomoModal()" style="background:none; border:none; font-size:1.25rem; cursor:pointer; margin-left:auto;">✕</button>
+            </div>
+            
+            <!-- UPDATED SELECTION INTERFACE CONTROLS WITH CANCEL BUTTON -->
+<div id="momo-payment-form">
+    <label style="display:block; font-size:0.85rem; font-weight:700; color:#475569; margin-bottom:8px;">Choose Direct Raw Network Core Route:</label>
+    
+    <div class="momo-networks" style="display: flex; gap: 1rem; margin-bottom:1.5rem;">
+        <label class="network-option" style="flex: 1; display:flex; align-items:center; gap:8px; cursor: pointer; border:2px solid #e2e8f0; padding:12px; border-radius:10px; background:#fffdf2; font-weight:700; color:#1e1b4b;">
+            <input type="radio" name="momo-provider" value="MTN" checked style="accent-color:#eab308; transform:scale(1.2);"> MTN MoMo API
+        </label>
+        <label class="network-option" style="flex: 1; display:flex; align-items:center; gap:8px; cursor: pointer; border:2px solid #e2e8f0; padding:12px; border-radius:10px; background:#fff5f5; font-weight:700; color:#1e1b4b;">
+            <input type="radio" name="momo-provider" value="Airtel" style="accent-color:#ef4444; transform:scale(1.2);"> Airtel Money API
+        </label>
+    </div>
+
+    <div class="form-group" style="margin-bottom:1.25rem;">
+        <label style="display:block; margin-bottom:6px; font-weight:600; color:#334155;">Subscriber Wallet Phone Number</label>
+        <input type="text" id="momo-phone" value="256770000000" placeholder="e.g. 256772111222" style="width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; font-family:monospace; font-size:1rem; box-sizing:border-box;">
+        <small style="color:#64748b; font-size:0.75rem; display:block; margin-top:4px;">* Must match country numeric code formatting standards for raw endpoint query requests.</small>
+    </div>
+
+    <div style="background:#f8fafc; padding:1.25rem; border-radius:12px; margin-bottom:1.5rem; border:1px solid #e2e8f0;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px; color:#475569; font-size:0.9rem;"><span>Allocation Matrix:</span> <strong id="momo-checkout-days-label" style="color:#1e1b4b;">0 Days</strong></div>
+        <div style="display:flex; justify-content:space-between; border-top:1px dashed #cbd5e1; padding-top:8px; font-size:0.95rem;"><span>Total Bill Due:</span> <strong id="momo-checkout-amount" style="color:#16a34a; font-family:monospace; font-size:1.1rem;">UGX 0</strong></div>
+    </div>
+
+    <!-- MAIN ACTION BUTTON -->
+    <button class="btn btn-primary" style="width:100%; background:#22c55e; color:white; border:none; padding:14px; border-radius:10px; font-size:1rem; font-weight:700; cursor:pointer; box-shadow:0 4px 6px -1px rgba(34,197,94,0.2); margin-bottom: 10px;" onclick="triggerMomoPush()">Authorize & Fire Raw USSD Push</button>
+    
+    <!-- NEW CANCEL BUTTON -->
+    <button class="btn btn-secondary" style="width:100%; background:#e2e8f0; color:#475569; border:none; padding:12px; border-radius:10px; font-size:0.95rem; font-weight:600; cursor:pointer; transition: background 0.2s;" onclick="cancelMomoPayment()" type="button">Cancel & Go Back</button>
+</div>
+
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Subscriber Wallet Phone</label>
+                    <input type="text" id="momo-phone" value="077" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;">
+                </div>
+
+                <div style="background:#f8fafc; padding:1rem; border-radius:8px; margin-bottom:1.5rem;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span>Allocation:</span> <strong id="momo-checkout-days-label">0 Days</strong></div>
+                    <div style="display:flex; justify-content:space-between; border-top:1px dashed #e2e8f0; padding-top:6px;"><span>Total:</span> <strong id="momo-checkout-amount">UGX 0</strong></div>
+                </div>
+
+                <button class="btn btn-primary" style="width:100%; background:#22c55e; color:white; border:none; padding:12px; border-radius:8px; font-weight:600; cursor:pointer;" onclick="triggerMomoPush()">Authorize & Pay Share</button>
+            </div>
+
+            <div id="momo-loading-screen" class="hidden" style="text-align:center; padding:2rem 0;">
+                <div style="font-size:2rem; animation:spin 1s linear infinite;">⏳</div>
+                <h4 style="margin:10px 0 0 0;">Verifying Handset SIM Node Connection...</h4>
+                <p style="color:#64748b; font-size:0.85rem;">Input your Mobile Money PIN on your device to confirm.</p>
+            </div>
+
+            <div id="momo-success-screen" class="hidden" style="text-align:center; padding:1rem 0;">
+                <div style="font-size: 3rem;">🎉</div>
+                <h4 style="color:#22c55e; margin:10px 0;">Transaction Confirmed!</h4>
+                <p id="momo-success-message" style="color:#64748b; font-size:0.9rem;"></p>
+                <button class="btn btn-primary" onclick="closeMomoModal()" style="background:#1e1b4b; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; margin-top:1rem;">Return to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-interface" class="app-container hidden" style="display:flex; min-height:100vh;">
+        
+        <aside style="width:260px; background:#1e1b4b; color:white; display:flex; flex-direction:column; padding:1rem;">
+            <div style="display:flex; align-items:center; gap:10px; padding-bottom:1.5rem; border-bottom:1px solid rgba(255,255,255,0.1);">
+                <div style="background:#22c55e; width:12px; height:12px; border-radius:50%;"></div>
+                <div>
+                    <h3 style="margin:0; font-size:1.1rem; letter-spacing:0.5px;">KALmia Engine</h3>
+                    <small id="user-role-badge" style="color:#a7f3d0; font-weight:600;"></small>
+                </div>
+            </div>
+
+            <nav style="margin-top:2rem; display:flex; flex-direction:column; gap:8px; flex-grow:1;">
+                <button class="nav-btn" id="btn-tenant" onclick="switchView('tenant')" style="background:none; border:none; color:white; padding:12px; text-align:left; font-size:0.95rem; cursor:pointer; border-radius:8px; display:none;">👤 Tenant Core Area</button>
+                <button class="nav-btn" id="btn-landlord" onclick="switchView('landlord')" style="background:none; border:none; color:white; padding:12px; text-align:left; font-size:0.95rem; cursor:pointer; border-radius:8px; display:none;">📊 Management Deck</button>
+                <button class="nav-btn" id="btn-admin" onclick="switchView('admin')" style="background:none; border:none; color:white; padding:12px; text-align:left; font-size:0.95rem; cursor:pointer; border-radius:8px; display:none; font-weight:700; border-left:3px solid #2563eb;">🚀 20% Master Admin</button>
+                <button class="nav-btn" id="btn-rooms" onclick="switchView('rooms')" style="background:none; border:none; color:white; padding:12px; text-align:left; font-size:0.95rem; cursor:pointer; border-radius:8px;">🏢 Vacant Unit Catalog</button>
+            </nav>
+
+            <button onclick="handleLogout()" style="background:#ef4444; color:white; border:none; padding:10px; border-radius:8px; font-weight:600; cursor:pointer; margin-top:auto;">LOG OUT</button>
+        </aside>
+
+        <main style="flex-grow:1; padding:2rem; overflow-y:auto; box-sizing:border-box;">
+            
+            <div id="tenant-view" class="view-panel hidden">
+                <div style="background:white; padding:2rem; border-radius:16px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom:2rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h2 style="margin:0; color:#1e1b4b;">Rent Account Security Tracker</h2>
+                            <p id="visual-date-subtext" style="color:#64748b; margin:4px 0 0 0; font-size:0.9rem;"></p>
+                        </div>
+                        <div style="text-align:right;">
+                            <span id="meter-status-smiley" style="font-size:1.5rem;">😊</span>
+                            <div id="meter-status-badge" style="font-weight:700; font-size:0.8rem;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="background:#f1f5f9; height:16px; border-radius:8px; margin-top:1.5rem; overflow:hidden;">
+                        <div id="visual-meter-fill" style="width:0%; height:100%; background:#22c55e; transition:width 0.5s ease;"></div>
+                    </div>
+                    <h3 id="visual-countdown-text" style="margin:10px 0 0 0; font-size:1.5rem; font-family:monospace; color:#1e1b4b;">Calculating...</h3>
+                </div>
+
+                <div style="background:white; padding:2rem; border-radius:16px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom:2rem;">
+                    <h3 style="margin:0 0 1rem 0; color:#1e1b4b;">Flexible Extension Purchase</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; align-items:center;">
+                        <div>
+                            <label style="display:block; font-size:0.85rem; font-weight:600; margin-bottom:6px; color:#475569;">Select Your Protection Block Plan</label>
+                            <select id="easy-prepaid-package" onchange="updateEasyInstallmentAmount()" style="width:100%; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-weight:600;">
+                                <option value="1">☀️ 1 Day Protection Block — UGX 50,000</option>
+                                <option value="7">🌱 1 Week Protection Block (7 Days) — UGX 350,000</option>
+                                <option value="30" selected>📅 1 Month Protection Block (30 Days) — UGX 1,500,000</option>
+                                <option value="365">🚀 1 Year Continuous Safety Block (365 Days) — UGX 18,250,000</option>
+                            </select>
+                        </div>
+                        <div style="display:flex; gap:1rem; align-items:center; background:#f8fafc; padding:1rem; border-radius:12px; border:1px solid #e2e8f0;">
+                            <div>
+                                <small style="color:#64748b; text-transform:uppercase; font-size:0.7rem; font-weight:700;">Computed Extension Amount</small>
+                                <div id="easy-days-preview" style="font-weight:700; color:#1e1b4b;">0 Days Selected</div>
+                                <div id="easy-cost-preview" style="font-size:1.25rem; font-weight:800; color:#22c55e; font-family:monospace;">UGX 0</div>
+                            </div>
+                            <button onclick="openMomoModal()" style="margin-left:auto; background:#1e1b4b; color:white; border:none; padding:12px 20px; border-radius:8px; font-weight:700; cursor:pointer;">Pay Instant via MoMo</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:white; padding:2rem; border-radius:16px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);">
+                    <h3 style="margin:0 0 1rem 0; color:#1e1b4b;">Official Voucher & Payment Logs</h3>
+                    <table style="width:100%; border-collapse:collapse; text-align:left;">
+                        <thead>
+                            <tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">
+                                <th style="padding:10px;">Voucher Ref Code</th>
+                                <th style="padding:10px;">Settlement Date</th>
+                                <th style="padding:10px;">Carrier Network</th>
+                                <th style="padding:10px;">Originating Number</th>
+                                <th style="padding:10px;">Gross Amount</th>
+                                <th style="padding:10px;">State Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tenant-receipts-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="landlord-view" class="view-panel hidden">
+                <div style="background:white; padding:2rem; border-radius:16px; margin-bottom:2rem; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h2 style="margin:0; color:#1e1b4b;">Landlord Property Tracking Metrics</h2>
+                        <p style="margin:4px 0 0 0; color:#64748b;">System Overview & Operational Roster Accounts</p>
+                    </div>
+                    <div style="background:#f0fdf4; padding:1rem; border-radius:12px; text-align:right;">
+                        <small style="color:#16a34a; font-weight:700; text-transform:uppercase; font-size:0.75rem;">Aggregated Gross Earnings Ledger</small>
+                        <div id="total-collected" style="font-size:1.5rem; font-weight:800; color:#16a34a; font-family:monospace;">UGX 0</div>
+                    </div>
+                </div>
+
+                <div style="background:white; padding:2rem; border-radius:16px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);">
+                    <table style="width:100%; border-collapse:collapse; text-align:left;">
+                        <thead>
+                            <tr style="background:#f8fafc; border-bottom:2px solid #cbd5e1;">
+                                <th style="padding:12px;">Occupant Name</th>
+                                <th style="padding:12px;">Assigned Unit</th>
+                                <th style="padding:12px;">Remaining Safe Days</th>
+                                <th style="padding:12px;">Expiration Target Date</th>
+                                <th style="padding:12px;">Gross Contributed</th>
+                                <th style="padding:12px;">Action Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="landlord-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-view" class="view-panel hidden">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; background:#fff; padding:1.5rem; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <div>
+                        <h2 style="margin:0; color:#1e1b4b; font-weight:800;">Master Operator Workspace Console</h2>
+                        <p style="margin:4px 0 0 0; color:#64748b; font-size:0.9rem;">Global Platform Controls & Real-Time 20% Revenue Auditing</p>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+                    <div style="background:white; padding:1.5rem; border-radius:16px; border-left:5px solid #22c55e; box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);">
+                        <p style="margin:0; font-size:0.75rem; font-weight:700; color:#64748b; text-transform:uppercase;">Gross System Ecosystem Volume</p>
+                        <h3 id="admin-total-processed" style="margin:8px 0 0 0; font-size:1.75rem; color:#1e1b4b; font-family:monospace;">UGX 0</h3>
+                    </div>
+                    <div style="background:#eff6ff; padding:1.5rem; border-radius:16px; border-left:5px solid #2563eb; box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);">
+                        <p style="margin:0; font-size:0.75rem; font-weight:700; color:#2563eb; text-transform:uppercase;">Your Accumulated 20% Operating Share</p>
+                        <h3 id="admin-net-cut" style="margin:8px 0 0 0; font-size:1.75rem; color:#1e1b4b; font-family:monospace;">UGX 0</h3>
+                    </div>
+                </div>
+
+                <div style="background:white; border-radius:16px; padding:1.5rem; margin-bottom:2rem; border:1px solid #e2e8f0;">
+                    <h3 style="margin:0 0 1rem 0; color:#1e1b4b;">Registered Landlords Platform Share Distribution Audit</h3>
+                    <table style="width:100%; border-collapse:collapse; text-align:left;">
+                        <thead>
+                            <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0;">
+                                <th style="padding:12px;">Landlord Legal Name</th>
+                                <th style="padding:12px;">Registered Mobile Line</th>
+                                <th style="padding:12px; text-align:center;">Managed Units</th>
+                                <th style="padding:12px; text-align:right;">Gross Generated</th>
+                                <th style="padding:12px; text-align:right; color:#2563eb;">20% Cut Owed to You</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-landlords-table-body"></tbody>
+                    </table>
+                </div>
+
+                <div style="background:white; border-radius:16px; padding:1.5rem; border:1px solid #e2e8f0;">
+                    <h3 style="margin:0 0 1rem 0; color:#1e1b4b;">Tenant Account Registry & Override Central Hub</h3>
+                    <table style="width:100%; border-collapse:collapse; text-align:left;">
+                        <thead>
+                            <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0;">
+                                <th style="padding:12px;">Occupant Name</th>
+                                <th style="padding:12px;">Allocated Room</th>
+                                <th style="padding:12px; text-align:right;">Gross Volume Paid</th>
+                                <th style="padding:12px; text-align:center;">Active Passphrase</th>
+                                <th style="padding:12px; text-align:center;">Administrative Force Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-tenants-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="rooms-view" class="view-panel hidden">
+                <h2 style="margin:0 0 1.5rem 0; color:#1e1b4b;">an empty house is waiting for you today</h2>
+                <div id="rooms-container" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.5rem;"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <style>
+        .hidden { display: none !important; }
+        .active { background: rgba(255,255,255,0.15) !important; font-weight:700; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</body>
+</html>
